@@ -2,6 +2,8 @@
 
 ParaFlow follows the **Ports and Adapters architecture** (also known as Hexagonal Architecture) to maintain clean separation of concerns and enable easy extensibility for different platforms and integrations.
 
+This document focuses on the implementation details. For the rationale behind our architectural choices and comparison with alternatives, see [Architecture Decisions](./architecture_decisions.md).
+
 ## Architecture Overview
 
 ```
@@ -98,18 +100,47 @@ The **Core Domain** contains the business logic and rules that are independent o
 4. **Core Domain** → **ExternalSystemPort** → **Notion Adapter** (updates Notion)
 5. **Core Domain** → **NotificationPort** → **Email Adapter** (notifies user)
 
-## Directory Structure
+## Monorepo Structure
+
+ParaFlow uses an **Apps/Packages** monorepo pattern that complements the hexagonal architecture:
 
 ```
-src/
-├── domain/           # Core Domain
-│   ├── models/       # Domain entities
-│   ├── services/     # Domain services
-│   └── ports/        # Port interfaces
-├── adapters/         # Adapters implementations
-│   ├── input/        # Input adapters
-│   └── output/       # Output adapters
-└── infrastructure/   # Cross-cutting concerns
+├── apps/
+│   ├── web/               # Frontend React/Vue application
+│   ├── api/               # Backend API server
+│   └── cli/               # Command-line interface
+├── packages/
+│   ├── domain/            # Core Domain (business logic)
+│   ├── adapters/          # Adapter implementations
+│   ├── shared-types/      # TypeScript types for API contracts
+│   └── ui-components/     # Reusable UI components
+├── infrastructure/        # Docker, deployment configurations
+└── docs/                  # Documentation
 ```
+
+### Package Structure
+
+Each package follows the hexagonal architecture principles:
+
+```
+packages/domain/
+├── models/               # Domain entities
+├── services/             # Domain services
+└── ports/                # Port interfaces
+
+packages/adapters/
+├── input/                # Input adapters (HTTP, CLI, webhooks)
+└── output/               # Output adapters (Notion, Obsidian, DB)
+```
+
+### Benefits of This Structure
+
+- **Shared Domain Logic**: Frontend, backend, and CLI all use the same core business logic
+- **Type Safety**: Shared types ensure consistency across the entire stack
+- **Independent Deployment**: Each app can be deployed separately
+- **Code Reuse**: UI components and utilities are shared across applications
+- **Maintainability**: Changes to domain logic automatically benefit all applications
+
+For detailed rationale behind this architectural choice, see [Architecture Decisions](./architecture_decisions.md).
 
 This architecture ensures that ParaFlow remains flexible, testable, and easily extensible for any platform or integration that contributors want to add.
