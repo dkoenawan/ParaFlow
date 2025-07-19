@@ -7,14 +7,14 @@ class ProcessingStatus(Enum):
     """Enumeration of possible processing states for thought content.
     
     States represent the lifecycle of a thought from intake to completion:
-    - PENDING: New thought awaiting processing
+    - NEW: New thought awaiting processing
     - PROCESSING: Currently being analyzed by Claude
     - COMPLETED: Successfully processed and categorized
     - FAILED: Processing failed, requires attention
     - SKIPPED: Duplicate or invalid content
     """
     
-    PENDING = "pending"
+    NEW = "new"
     PROCESSING = "processing"
     COMPLETED = "completed"
     FAILED = "failed"
@@ -50,7 +50,7 @@ class ProcessingStatus(Enum):
         """Check if this status can transition to another status.
         
         Valid transitions:
-        - PENDING -> PROCESSING, SKIPPED
+        - NEW -> PROCESSING, SKIPPED
         - PROCESSING -> COMPLETED, FAILED
         - FAILED -> PROCESSING (retry)
         - COMPLETED/SKIPPED are final states
@@ -62,7 +62,7 @@ class ProcessingStatus(Enum):
             True if transition is valid, False otherwise
         """
         valid_transitions = {
-            ProcessingStatus.PENDING: {ProcessingStatus.PROCESSING, ProcessingStatus.SKIPPED},
+            ProcessingStatus.NEW: {ProcessingStatus.PROCESSING, ProcessingStatus.SKIPPED},
             ProcessingStatus.PROCESSING: {ProcessingStatus.COMPLETED, ProcessingStatus.FAILED},
             ProcessingStatus.FAILED: {ProcessingStatus.PROCESSING},  # Allow retry
             ProcessingStatus.COMPLETED: set(),  # Final state

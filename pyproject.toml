@@ -6,10 +6,13 @@ build-backend = "setuptools.build_meta"
 name = "paraflow"
 version = "0.1.0"
 description = "AI-powered personal assistant that captures, processes, and organizes your thoughts into the PARA framework"
-authors = [{name = "ParaFlow Contributors", email = "noreply@example.com"}]
+authors = [
+    {name = "Daniel Koenawan", email = "daniel.k.koenawan@gmail.com"},
+    {name = "ParaFlow Contributors", email = "noreply@example.com"}
+]
 license = {text = "Apache-2.0"}
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",

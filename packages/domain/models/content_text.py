@@ -1,7 +1,6 @@
 """ContentText value object for validated thought content."""
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(frozen=True)

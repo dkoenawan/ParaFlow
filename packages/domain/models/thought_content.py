@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 
 from .thought_id import ThoughtId
 from .content_text import ContentText
@@ -33,8 +32,8 @@ class ThoughtContent:
     created_date: datetime
     processed: bool
     processing_status: ProcessingStatus
-    project_tag: Optional[str] = None
-    area_tag: Optional[str] = None
+    project_tag: str | None = None
+    area_tag: str | None = None
 
     def __post_init__(self) -> None:
         """Validate the thought content after initialization."""
@@ -71,9 +70,9 @@ class ThoughtContent:
         cls,
         title: str,
         content: str,
-        project_tag: Optional[str] = None,
-        area_tag: Optional[str] = None,
-        created_date: Optional[datetime] = None,
+        project_tag: str | None = None,
+        area_tag: str | None = None,
+        created_date: datetime | None = None,
     ) -> "ThoughtContent":
         """Create a new thought with generated ID and default values.
         
@@ -97,7 +96,7 @@ class ThoughtContent:
             content=ContentText.create(content),
             created_date=created_date or datetime.utcnow(),
             processed=False,
-            processing_status=ProcessingStatus.PENDING,
+            processing_status=ProcessingStatus.NEW,
             project_tag=project_tag,
             area_tag=area_tag,
         )
@@ -111,8 +110,8 @@ class ThoughtContent:
         created_date: datetime,
         processed: bool,
         processing_status: str,
-        project_tag: Optional[str] = None,
-        area_tag: Optional[str] = None,
+        project_tag: str | None = None,
+        area_tag: str | None = None,
     ) -> "ThoughtContent":
         """Restore a thought from persistent storage.
         
@@ -229,7 +228,7 @@ class ThoughtContent:
     def _update_status(
         self, 
         new_status: ProcessingStatus, 
-        processed: Optional[bool] = None
+        processed: bool | None = None
     ) -> "ThoughtContent":
         """Create a new instance with updated status.
         

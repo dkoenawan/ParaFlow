@@ -22,7 +22,7 @@ class TestThoughtContent:
         assert thought.title == "Test Thought"
         assert thought.content.value == "This is a test thought"
         assert thought.processed is False
-        assert thought.processing_status == ProcessingStatus.PENDING
+        assert thought.processing_status == ProcessingStatus.NEW
         assert thought.project_tag is None
         assert thought.area_tag is None
         assert isinstance(thought.id, ThoughtId)
@@ -87,7 +87,7 @@ class TestThoughtContent:
         
         assert processing_thought.processing_status == ProcessingStatus.PROCESSING
         assert processing_thought.processed is False
-        assert thought.processing_status == ProcessingStatus.PENDING  # Original unchanged
+        assert thought.processing_status == ProcessingStatus.NEW  # Original unchanged
 
     def test_mark_as_processing_invalid_transition(self) -> None:
         """Test that invalid transition to processing raises error."""
@@ -234,7 +234,7 @@ class TestThoughtContent:
                 content=ContentText("Content"),
                 created_date=datetime.utcnow(),
                 processed=False,
-                processing_status=ProcessingStatus.PENDING
+                processing_status=ProcessingStatus.NEW
             )
 
     def test_validation_content_type(self) -> None:
@@ -246,7 +246,7 @@ class TestThoughtContent:
                 content="Not ContentText",  # type: ignore
                 created_date=datetime.utcnow(),
                 processed=False,
-                processing_status=ProcessingStatus.PENDING
+                processing_status=ProcessingStatus.NEW
             )
 
     def test_validation_processed_type(self) -> None:
@@ -258,7 +258,7 @@ class TestThoughtContent:
                 content=ContentText("Content"),
                 created_date=datetime.utcnow(),
                 processed="yes",  # type: ignore
-                processing_status=ProcessingStatus.PENDING
+                processing_status=ProcessingStatus.NEW
             )
 
     def test_validation_processing_status_type(self) -> None:
@@ -282,7 +282,7 @@ class TestThoughtContent:
                 content=ContentText("Content"),
                 created_date=datetime.utcnow(),
                 processed=False,
-                processing_status=ProcessingStatus.PENDING,
+                processing_status=ProcessingStatus.NEW,
                 project_tag=123  # type: ignore
             )
 
@@ -295,7 +295,7 @@ class TestThoughtContent:
                 content=ContentText("Content"),
                 created_date=datetime.utcnow(),
                 processed=False,
-                processing_status=ProcessingStatus.PENDING,
+                processing_status=ProcessingStatus.NEW,
                 area_tag=123  # type: ignore
             )
 
