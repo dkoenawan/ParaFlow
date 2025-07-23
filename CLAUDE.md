@@ -14,10 +14,17 @@ Note: Always follow a hexagonal code architecture (Ports & Adapters) and SOLID p
 ### Execution Mode
 1. Create a new branch from develop, follow trunk-based branching methods
 2. Execute the command from the plan, step by step.
-3. (If Applicable) Run Unit Test
+3. (If Applicable) Run Unit Tests using: `source venv/bin/activate && python -m pytest [test_path] -v`
 4. Report your outcome back to the Github issue 
 5. Commit, push and create PR to develop
 6. Wait for further comments or response from GitHub issue.
+
+### Testing Commands
+- **Run specific test file**: `source venv/bin/activate && python -m pytest packages/domain/tests/test_[module].py -v`
+- **Run all domain tests**: `source venv/bin/activate && python -m pytest packages/domain/tests/ -v`
+- **Run with coverage**: `source venv/bin/activate && python -m pytest packages/domain/tests/ --cov=packages --cov-report=term-missing -v`
+- **IMPORTANT**: Always activate the virtual environment first with `source venv/bin/activate` before running pytest
+- **AVOID**: Using `python` or `python3` directly without virtual environment activation
 
 ### Clean Up Mode
 1. Update all documentation (README.md)
