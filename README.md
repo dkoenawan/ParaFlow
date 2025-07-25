@@ -42,7 +42,84 @@ ParaFlow automates this process by:
 
 ## Getting Started
 
-*Coming soon - this project is in early development*
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/dkoenawan/ParaFlow.git
+cd ParaFlow
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -e .
+```
+
+### Development Setup
+
+```bash
+# Install development dependencies
+pip install -e ".[dev]"
+
+# Run tests
+python -m pytest packages/domain/tests/
+
+# Run type checking
+mypy packages/
+```
+
+### Current Implementation Status
+
+**✅ Completed:**
+- Core domain model for thought streaming
+- ThoughtContent entity with immutable design
+- Processing status lifecycle management
+- Type-safe value objects (ThoughtId, ContentText)
+- Comprehensive test suite (76+ tests)
+- Monorepo package structure
+
+**🚧 In Progress:**
+- Infrastructure layer implementation
+- API endpoints for thought capture
+- Claude integration for content processing
+
+**📋 Planned:**
+- PARA framework categorization
+- Notion integration
+- Webhook support
+- Automated content scanning
+
+## Architecture
+
+ParaFlow follows hexagonal architecture (Ports & Adapters) and domain-driven design principles:
+
+### Domain Model
+
+The core domain model includes:
+
+- **`ThoughtContent`**: Main entity representing user thoughts with free-form content
+- **`ThoughtId`**: Type-safe unique identifier for thoughts  
+- **`ContentText`**: Value object for validated thought content
+- **`ProcessingStatus`**: Enum managing thought processing lifecycle (NEW → PROCESSING → COMPLETED/FAILED)
+
+Key design principles:
+- **Immutable entities**: All domain objects are frozen dataclasses
+- **Type safety**: Strong typing with native Python union types
+- **Business rules**: Domain logic enforced at entity level
+- **No length limits**: Supports seamless thought streaming
+
+### Package Structure
+
+```
+packages/
+├── domain/                 # Core domain layer
+│   ├── models/            # Domain entities and value objects
+│   └── tests/             # Comprehensive test suite
+├── infrastructure/        # External integrations (planned)
+└── application/          # Use cases and services (planned)
+```
 
 ## Contributing
 
