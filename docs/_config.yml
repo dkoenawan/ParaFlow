@@ -1,0 +1,16 @@
+title: ParaFlow Documentation
+description: AI-powered personal assistant for PARA methodology organization
+baseurl: "/ParaFlow"
+url: "https://dkoenawan.github.io"
+
+theme: minima
+
+markdown: kramdown
+highlighter: rouge
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+exclude:
+  - README.md
