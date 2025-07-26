@@ -12,6 +12,7 @@ from .resource_id import ResourceId
 from .para_category import PARACategory
 from .resource_tags import ResourceTags
 from .resource import Resource
+from .categorization_result import CategorizationResult
 
 __all__ = [
     "ThoughtId",
@@ -22,4 +23,5 @@ __all__ = [
     "PARACategory",
     "ResourceTags",
     "Resource",
+    "CategorizationResult",
 ]
