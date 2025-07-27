@@ -98,11 +98,11 @@ class TestProcessingExceptions:
 class TestThoughtProcessingServiceInitialization:
     """Test service initialization."""
 
-    def test_default_initialization(self):
-        """Test service initializes with default categorizer."""
-        service = ThoughtProcessingService()
-        assert service._categorizer is not None
-        assert isinstance(service._categorizer, PARACategorizerService)
+    def test_initialization_requires_categorizer(self):
+        """Test service requires categorizer service parameter."""
+        mock_categorizer = Mock(spec=PARACategorizerService)
+        service = ThoughtProcessingService(categorizer_service=mock_categorizer)
+        assert service._categorizer == mock_categorizer
 
     def test_custom_categorizer_initialization(self):
         """Test service initializes with custom categorizer."""
@@ -116,7 +116,8 @@ class TestThoughtValidation:
 
     def setup_method(self):
         """Set up test fixtures."""
-        self.service = ThoughtProcessingService()
+        self.mock_categorizer = Mock(spec=PARACategorizerService)
+        self.service = ThoughtProcessingService(categorizer_service=self.mock_categorizer)
 
     def test_validate_valid_thought(self):
         """Test validation passes for valid thought."""
@@ -434,7 +435,8 @@ class TestUtilityMethods:
 
     def setup_method(self):
         """Set up test fixtures."""
-        self.service = ThoughtProcessingService()
+        self.mock_categorizer = Mock(spec=PARACategorizerService)
+        self.service = ThoughtProcessingService(categorizer_service=self.mock_categorizer)
 
     def test_can_process_thought_valid(self):
         """Test can_process_thought returns True for valid thought."""

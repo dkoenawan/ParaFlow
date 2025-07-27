@@ -4,7 +4,6 @@ This application service coordinates the complete workflow from thought intake
 to resource creation, following hexagonal architecture principles.
 """
 
-from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
 from datetime import datetime
 import re
@@ -29,8 +28,8 @@ class ProcessingResult:
     """
     success: bool
     thought: ThoughtContent
-    resource: Optional[Resource]
-    error_message: Optional[str]
+    resource: Resource | None
+    error_message: str | None
     processing_time_ms: int
 
     @classmethod
@@ -107,20 +106,19 @@ class ThoughtProcessingService:
 
     def __init__(
         self,
-        categorizer_service: Optional[PARACategorizerService] = None
+        categorizer_service: PARACategorizerService
     ) -> None:
         """Initialize the thought processing service.
         
         Args:
             categorizer_service: Service for PARA categorization
-                                If None, creates default instance
         """
-        self._categorizer = categorizer_service or PARACategorizerService()
+        self._categorizer = categorizer_service
 
     def process_thought(
         self,
         thought: ThoughtContent,
-        user_context: Optional[Dict[str, Any]] = None
+        user_context: dict[str, any] | None = None
     ) -> ProcessingResult:
         """Process a single thought through the complete workflow.
         
@@ -190,9 +188,9 @@ class ThoughtProcessingService:
 
     def process_thoughts_batch(
         self,
-        thoughts: List[ThoughtContent],
-        user_context: Optional[Dict[str, Any]] = None
-    ) -> List[ProcessingResult]:
+        thoughts: list[ThoughtContent],
+        user_context: dict[str, any] | None = None
+    ) -> list[ProcessingResult]:
         """Process multiple thoughts efficiently.
         
         Args:
@@ -229,7 +227,7 @@ class ThoughtProcessingService:
     def retry_failed_processing(
         self,
         thought: ThoughtContent,
-        user_context: Optional[Dict[str, Any]] = None
+        user_context: dict[str, any] | None = None
     ) -> ProcessingResult:
         """Retry processing for a previously failed thought.
         
@@ -301,7 +299,7 @@ class ThoughtProcessingService:
     def _check_for_duplicates(
         self,
         thought: ThoughtContent,
-        user_context: Optional[Dict[str, Any]] = None
+        user_context: dict[str, any] | None = None
     ) -> None:
         """Check for duplicate thoughts.
         
@@ -330,8 +328,8 @@ class ThoughtProcessingService:
     def _categorize_thought(
         self,
         thought: ThoughtContent,
-        user_context: Optional[Dict[str, Any]] = None
-    ) -> Any:  # CategorizationResult type
+        user_context: dict[str, any] | None = None
+    ) -> any:  # CategorizationResult type
         """Categorize thought using PARA methodology.
         
         Args:
@@ -352,8 +350,8 @@ class ThoughtProcessingService:
     def _create_resource(
         self,
         thought: ThoughtContent,
-        categorization_result: Any,  # CategorizationResult type
-        user_context: Optional[Dict[str, Any]] = None
+        categorization_result: any,  # CategorizationResult type
+        user_context: dict[str, any] | None = None
     ) -> Resource:
         """Create resource from processed thought and categorization.
         
@@ -373,6 +371,9 @@ class ThoughtProcessingService:
             tags = categorization_result.suggested_tags.copy()
             
             # Add user tags if present (format compatible with ResourceTags validation)
+            # TODO: Extract tag cleaning logic into a reusable guard clause/utility function
+            # This logic should be shared across other services that need to clean user input
+            # for ResourceTags compatibility (alphanumeric with hyphens/underscores only)
             if thought.project_tag:
                 # Clean the tag to make it alphanumeric with hyphens/underscores
                 clean_project = re.sub(r'[^a-z0-9_-]', '-', thought.project_tag.lower())
@@ -464,8 +465,8 @@ class ThoughtProcessingService:
 
     def get_processing_statistics(
         self,
-        results: List[ProcessingResult]
-    ) -> Dict[str, Any]:
+        results: list[ProcessingResult]
+    ) -> dict[str, any]:
         """Get statistics from processing results.
         
         Args:
