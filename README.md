@@ -73,23 +73,27 @@ mypy packages/
 ### Current Implementation Status
 
 **✅ Completed:**
-- Core domain model for thought streaming
-- ThoughtContent entity with immutable design
-- Processing status lifecycle management
-- Type-safe value objects (ThoughtId, ContentText)
-- Comprehensive test suite (76+ tests)
-- Monorepo package structure
+- Core domain model for thought streaming and resource management
+- ThoughtContent entity with immutable design and lifecycle management
+- Resource entity for PARA methodology organization
+- Processing status lifecycle management (NEW → PROCESSING → COMPLETED/FAILED)
+- Type-safe value objects (ThoughtId, ContentText, ResourceId, ResourceTags)
+- PARACategorizerService for content classification (placeholder with future-ready interface)
+- ThoughtProcessingService for orchestrating complete thought-to-resource workflow
+- Comprehensive domain services with hexagonal architecture design
+- Extensive test suite (100+ tests) with high code coverage
+- Monorepo package structure with clean separation of concerns
 
 **🚧 In Progress:**
+- Domain Events implementation for processing lifecycle events
 - Infrastructure layer implementation
-- API endpoints for thought capture
-- Claude integration for content processing
+- API endpoints for thought capture and processing
 
 **📋 Planned:**
-- PARA framework categorization
-- Notion integration
-- Webhook support
-- Automated content scanning
+- Advanced LLM-based categorization with personal context awareness
+- Notion integration for workspace automation
+- Webhook support for real-time updates
+- Automated content scanning and reorganization
 
 ## Architecture
 
@@ -99,16 +103,113 @@ ParaFlow follows hexagonal architecture (Ports & Adapters) and domain-driven des
 
 The core domain model includes:
 
-- **`ThoughtContent`**: Main entity representing user thoughts with free-form content
-- **`ThoughtId`**: Type-safe unique identifier for thoughts  
-- **`ContentText`**: Value object for validated thought content
+**Entities:**
+- **`ThoughtContent`**: Main entity representing user thoughts with free-form content and processing lifecycle
+- **`Resource`**: Entity representing organized content within PARA methodology framework
+
+**Value Objects:**
+- **`ThoughtId`**: Type-safe unique identifier for thoughts
+- **`ResourceId`**: Type-safe unique identifier for resources
+- **`ContentText`**: Value object for validated content with length management
+- **`ResourceTags`**: Value object for managing resource tags with validation
 - **`ProcessingStatus`**: Enum managing thought processing lifecycle (NEW → PROCESSING → COMPLETED/FAILED)
+- **`PARACategory`**: Enum for PARA methodology categories (PROJECT/AREA/RESOURCE/ARCHIVE)
+
+**Services:**
+- **`ThoughtProcessingService`**: Application service orchestrating complete thought-to-resource transformation
+- **`PARACategorizerService`**: Domain service for intelligent content classification using PARA methodology
 
 Key design principles:
 - **Immutable entities**: All domain objects are frozen dataclasses
 - **Type safety**: Strong typing with native Python union types
 - **Business rules**: Domain logic enforced at entity level
+- **Hexagonal architecture**: Clear separation between domain logic and external concerns
 - **No length limits**: Supports seamless thought streaming
+
+### Service Architecture
+
+#### ThoughtProcessingService Workflow
+
+The ThoughtProcessingService orchestrates the complete thought-to-resource transformation workflow:
+
+```mermaid
+flowchart TD
+    A[ThoughtContent Input] --> B[Validate Thought]
+    B --> C[Mark as Processing]
+    C --> D[Check for Duplicates]
+    D --> E[Categorize with PARA]
+    E --> F[Create Resource]
+    F --> G[Mark as Completed]
+    G --> H[Return ProcessingResult]
+    
+    B -->|Validation Error| I[Mark as Failed]
+    D -->|Duplicate Found| I
+    E -->|Categorization Error| I
+    F -->|Resource Creation Error| I
+    I --> J[Return Failed Result]
+    
+    style A fill:#e1f5fe
+    style H fill:#e8f5e8
+    style J fill:#ffebee
+    style E fill:#fff3e0
+```
+
+#### PARA Categorization Process
+
+The PARACategorizerService classifies content according to PARA methodology:
+
+```mermaid
+flowchart LR
+    A[Content Input] --> B{User Tags Present?}
+    B -->|Yes| C[Use User Hints]
+    B -->|No| D[Analyze Content]
+    
+    C --> E[High Confidence Classification]
+    D --> F{Clear Indicators?}
+    F -->|Yes| G[Medium Confidence Classification]
+    F -->|No| H[Default to RESOURCE]
+    
+    E --> I[Create CategorizationResult]
+    G --> I
+    H --> J[Low Confidence Result]
+    J --> I
+    
+    I --> K[Return with Confidence Score]
+    
+    style A fill:#e1f5fe
+    style E fill:#e8f5e8
+    style G fill:#fff3e0
+    style H fill:#ffebee
+    style K fill:#f3e5f5
+```
+
+#### Service Interaction Overview
+
+```mermaid
+graph TB
+    subgraph "Application Layer"
+        TPS[ThoughtProcessingService]
+    end
+    
+    subgraph "Domain Layer"
+        PCS[PARACategorizerService]
+        TC[ThoughtContent]
+        R[Resource]
+        CR[CategorizationResult]
+    end
+    
+    TPS -->|orchestrates| PCS
+    TPS -->|processes| TC
+    TPS -->|creates| R
+    PCS -->|returns| CR
+    CR -->|used to create| R
+    
+    style TPS fill:#e3f2fd
+    style PCS fill:#f3e5f5
+    style TC fill:#e8f5e8
+    style R fill:#fff3e0
+    style CR fill:#fce4ec
+```
 
 ### Package Structure
 
@@ -116,9 +217,21 @@ Key design principles:
 packages/
 ├── domain/                 # Core domain layer
 │   ├── models/            # Domain entities and value objects
-│   └── tests/             # Comprehensive test suite
+│   │   ├── thought_content.py
+│   │   ├── resource.py
+│   │   ├── categorization_result.py
+│   │   ├── processing_status.py
+│   │   ├── para_category.py
+│   │   └── ...           # Other value objects
+│   ├── services/          # Domain services
+│   │   ├── thought_processing_service.py
+│   │   └── para_categorizer_service.py
+│   └── tests/             # Comprehensive test suite (100+ tests)
+│       ├── services/      # Service tests
+│       ├── test_*.py      # Model tests
+│       └── ...
 ├── infrastructure/        # External integrations (planned)
-└── application/          # Use cases and services (planned)
+└── application/          # Use cases and API layer (planned)
 ```
 
 ## Contributing
