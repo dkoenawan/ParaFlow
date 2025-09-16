@@ -69,14 +69,17 @@ NOTION_DATABASE_ID=your_notion_page_id
 ### 2. Install Dependencies
 
 ```bash
-# Install required packages
-pip install notion-client python-dotenv pytest-asyncio
+# Create virtual environment (recommended)
+python -m venv .venv
 
-# Or if using virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install notion-client python-dotenv pytest-asyncio
+# Activate virtual environment
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install all dependencies from requirements.txt
+pip install -r requirements.txt
 ```
+
+**Note**: You must use `source .venv/bin/activate` (not just `.venv/bin/activate`) to properly activate the virtual environment.
 
 ### 3. Configure Notion Integration
 
@@ -93,7 +96,10 @@ pip install notion-client python-dotenv pytest-asyncio
    - Copy the page ID from URL
 
 3. **Update .env**:
-   - Add your token and page ID to .env file
+   ```bash
+   NOTION_TOKEN=your_integration_token_here
+   NOTION_DATABASE_ID=your_page_id_here  # Note: Despite the name, use a PAGE ID, not database ID
+   ```
 
 ### 4. Run the Demo
 
@@ -162,13 +168,16 @@ ParaFlow/
 ## 🧪 Testing
 
 ```bash
-# Run unit tests (requires pytest installation)
+# Make sure dependencies are installed first
+pip install -r requirements.txt
+
+# Run unit tests
 python -m pytest tests/unit/ -v
 
-# Run with coverage (requires pytest-cov)
+# Run with coverage report
 python -m pytest tests/unit/ --cov=packages --cov-report=html
 
-# Run integration tests (requires Notion setup)
+# Run integration tests (requires Notion setup in .env)
 python -m pytest tests/integration/ -v
 ```
 
@@ -218,7 +227,7 @@ asyncio.run(example())
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `NOTION_TOKEN` | Yes | Notion integration token from your integration |
-| `NOTION_DATABASE_ID` | Yes | ID of a Notion page shared with your integration |
+| `NOTION_DATABASE_ID` | Yes | ID of a Notion **page** (not database) shared with your integration |
 | `ENVIRONMENT` | No | Environment indicator (development/production) |
 
 ## 🛣️ Roadmap
