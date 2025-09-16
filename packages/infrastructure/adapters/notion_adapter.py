@@ -87,6 +87,7 @@ class NotionPageRepositoryAdapter(PageRepositoryPort):
             return self._map_notion_response_to_page(response)
             
         except (HTTPResponseError, APIResponseError, RequestTimeoutError) as e:
+
             raise PageCreationError(f"Failed to create page in Notion: {str(e)}")
         except Exception as e:
             raise PageCreationError(f"Unexpected error during page creation: {str(e)}")
@@ -256,11 +257,11 @@ class NotionPageRepositoryAdapter(PageRepositoryPort):
             # Handle offset by skipping items (simple implementation)
             if offset > 0:
                 pages = pages[offset:]
-            
             return pages
-            
+          
         except (HTTPResponseError, APIResponseError, RequestTimeoutError) as e:
             raise PageRetrievalError(f"Failed to list pages from Notion: {str(e)}")
+            
         except Exception as e:
             raise PageRetrievalError(f"Unexpected error during page listing: {str(e)}")
     
