@@ -1,15 +1,14 @@
 <!-- Sync Impact Report
-Version change: 1.0.0 (new constitution)
-Modified principles: N/A (initial version)
-Added sections: All sections (initial creation)
-Removed sections: N/A (initial version)
+Version change: 1.0.0 → 1.0.1 (patch - version consistency fix)
+Modified principles: N/A (no content changes)
+Added sections: N/A (patch version)
+Removed sections: N/A (patch version)
 Templates requiring updates:
-  ✅ plan-template.md - References constitution v2.1.1, needs update to v1.0.0
+  ✅ plan-template.md - Updated constitution version reference from v2.1.1 to v1.0.1
   ✅ spec-template.md - No constitution references, aligned
   ✅ tasks-template.md - No constitution references, aligned
-  ✅ agent-file-template.md - To be checked if exists
 Follow-up TODOs:
-  - TODO(RATIFICATION_DATE): Confirm original adoption date with project owner
+  ✅ TODO(RATIFICATION_DATE): Set to 2025-09-21 (initial implementation date)
 -->
 
 # ParaFlow Constitution
@@ -89,4 +88,4 @@ The Constitution supersedes all other project practices and guidelines. Any devi
 - MINOR: Addition of new principles or significant expansions
 - PATCH: Clarifications, wording improvements, typo fixes
 
-**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE) | **Last Amended**: 2025-09-21
+**Version**: 1.0.1 | **Ratified**: 2025-09-21 | **Last Amended**: 2025-09-24
