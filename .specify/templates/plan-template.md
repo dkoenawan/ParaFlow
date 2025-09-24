@@ -47,24 +47,7 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-### Core Principles Compliance
-- [ ] **Hexagonal Architecture**: Domain/Application/Infrastructure layers properly separated
-- [ ] **TDD Enforcement**: Tests written before implementation, Red-Green-Refactor cycle planned
-- [ ] **PARA Alignment**: Feature supports Projects/Areas/Resources/Archives categorization
-- [ ] **Clean Code**: PEP 8, docstrings, type hints planned for all code
-- [ ] **Async-First**: All I/O operations use async/await patterns
-
-### Technology Standards
-- [ ] Python 3.11+ exclusive implementation
-- [ ] pytest for all test suites
-- [ ] asyncio for concurrent operations
-- [ ] mypy type checking configured
-
-### Development Workflow
-- [ ] Feature branch follows `feature/###-description` format
-- [ ] Issue number referenced in branch and commits
-- [ ] 80% test coverage target defined
-- [ ] Migration plan for any breaking changes
+[Gates determined based on constitution file]
 
 ## Project Structure
 
@@ -162,7 +145,8 @@ ios/ or android/
    - Quickstart test = story validation steps
 
 5. **Update agent file incrementally** (O(1) operation):
-   - Run `.specify/scripts/bash/update-agent-context.sh claude` for your AI assistant
+   - Run `.specify/scripts/bash/update-agent-context.sh claude`
+     **IMPORTANT**: Execute it exactly as specified above. Do not add or remove any arguments.
    - If exists: Add only NEW tech from current plan
    - Preserve manual additions between markers
    - Update recent changes (keep last 3)
@@ -225,4 +209,4 @@ ios/ or android/
 - [ ] Complexity deviations documented
 
 ---
-*Based on Constitution v1.0.0 - See `.specify/memory/constitution.md`*
+*Based on Constitution v2.1.1 - See `/memory/constitution.md`*
