@@ -8,26 +8,26 @@
 ## Execution Flow (main)
 ```
 1. Parse user description from Input
-   ’ If empty: ERROR "No feature description provided"
+   ï¿½ If empty: ERROR "No feature description provided"
 2. Extract key concepts from description
-   ’ Identify: actors, actions, data, constraints
+   ï¿½ Identify: actors, actions, data, constraints
 3. For each unclear aspect:
-   ’ Mark with [NEEDS CLARIFICATION: specific question]
+   ï¿½ Mark with [NEEDS CLARIFICATION: specific question]
 4. Fill User Scenarios & Testing section
-   ’ If no clear user flow: ERROR "Cannot determine user scenarios"
+   ï¿½ If no clear user flow: ERROR "Cannot determine user scenarios"
 5. Generate Functional Requirements
-   ’ Each requirement must be testable
-   ’ Mark ambiguous requirements
+   ï¿½ Each requirement must be testable
+   ï¿½ Mark ambiguous requirements
 6. Identify Key Entities (if data involved)
 7. Run Review Checklist
-   ’ If any [NEEDS CLARIFICATION]: WARN "Spec has uncertainties"
-   ’ If implementation details found: ERROR "Remove tech details"
+   ï¿½ If any [NEEDS CLARIFICATION]: WARN "Spec has uncertainties"
+   ï¿½ If implementation details found: ERROR "Remove tech details"
 8. Return: SUCCESS (spec ready for planning)
 ```
 
 ---
 
-## ¡ Quick Guidelines
+## ï¿½ Quick Guidelines
 -  Focus on WHAT users need and WHY
 - L Avoid HOW to implement (no tech stack, APIs, code structure)
 - =e Written for business stakeholders, not developers
@@ -68,11 +68,11 @@ As a user with an existing Notion integration, I want to manage Notion databases
 8. **Given** an existing page in a database, **When** I delete the page, **Then** the page is removed from the database
 
 ### Edge Cases
-- What happens when attempting to create a database with invalid or missing required properties?
-- How does the system handle deletion of a database that contains pages?
-- What occurs when trying to access a database that has been deleted or moved by another user?
-- How are permission errors handled when the user lacks access to perform database operations?
-- What happens when creating a page in a database with required properties that aren't provided?
+- What happens when attempting to create a database with invalid or missing required properties? â†’ CRUD MVP should validate and confirm with user before creation
+- How does the system handle deletion of a database that contains pages? â†’ Double confirm with user on destructive changes
+- What occurs when trying to access a database that has been deleted or moved by another user? â†’ Alert users
+- How are permission errors handled when the user lacks access to perform database operations? â†’ Alert users to review and update API key permissions
+- What happens when creating a page in a database with required properties that aren't provided? â†’ Confirm with users
 
 ## Requirements *(mandatory)*
 
@@ -85,10 +85,9 @@ As a user with an existing Notion integration, I want to manage Notion databases
 - **FR-006**: System MUST provide the ability to read and display pages from databases including their property values and content
 - **FR-007**: System MUST enable users to update existing pages in databases, modifying both properties and content
 - **FR-008**: System MUST allow users to delete pages from databases
-- **FR-009**: System MUST handle authentication and authorization for Notion workspace access [NEEDS CLARIFICATION: authentication method and permission model not specified]
+- **FR-009**: System MUST handle authentication and authorization for Notion workspace access using API key authentication
 - **FR-010**: System MUST provide appropriate error handling and user feedback for failed operations
 - **FR-011**: System MUST validate database and page operations before execution to prevent invalid states
-- **FR-012**: System MUST maintain data consistency between the local system and Notion workspace [NEEDS CLARIFICATION: sync strategy and conflict resolution not specified]
 
 ### Key Entities *(include if feature involves data)*
 - **Database**: Represents a Notion database with properties including title, schema definition, property types, and configuration settings
