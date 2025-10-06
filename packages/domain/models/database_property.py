@@ -67,19 +67,21 @@ class DatabaseProperty:
         Returns:
             Dictionary in Notion API property schema format
         """
-        notion_format: Dict[str, Any] = {
-            "type": self.property_type.value,
-        }
+        type_str = self.property_type.value
+        notion_format: Dict[str, Any] = {}
 
         # Add type-specific configuration
         if self.property_type == PropertyType.SELECT and "options" in self.config:
-            notion_format["select"] = {"options": self.config["options"]}
+            notion_format[type_str] = {"options": self.config["options"]}
         elif (
             self.property_type == PropertyType.MULTI_SELECT and "options" in self.config
         ):
-            notion_format["multi_select"] = {"options": self.config["options"]}
+            notion_format[type_str] = {"options": self.config["options"]}
         elif self.property_type == PropertyType.NUMBER and "format" in self.config:
-            notion_format["number"] = {"format": self.config["format"]}
+            notion_format[type_str] = {"format": self.config["format"]}
+        else:
+            # For other types (title, rich_text, date, checkbox, etc.), just include empty object
+            notion_format[type_str] = {}
 
         return notion_format
 
