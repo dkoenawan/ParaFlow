@@ -48,3 +48,36 @@ class PageDeletionError(PageError):
 class PageRetrievalError(PageError):
     """Raised when page retrieval operation fails."""
     pass
+
+
+class DatabaseError(DomainError):
+    """Base exception for database-related errors."""
+    pass
+
+
+class DatabaseNotFoundError(DatabaseError):
+    """Raised when a requested database does not exist."""
+
+    def __init__(self, database_id: str):
+        super().__init__(f"Database with ID '{database_id}' not found")
+        self.database_id = database_id
+
+
+class DatabaseCreationError(DatabaseError):
+    """Raised when database creation fails."""
+    pass
+
+
+class DatabaseUpdateError(DatabaseError):
+    """Raised when database update operation fails."""
+    pass
+
+
+class DatabaseDeletionError(DatabaseError):
+    """Raised when database deletion operation fails."""
+    pass
+
+
+class DatabaseRetrievalError(DatabaseError):
+    """Raised when database retrieval operation fails."""
+    pass

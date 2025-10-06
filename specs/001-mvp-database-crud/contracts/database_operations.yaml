@@ -1,0 +1,281 @@
+openapi: 3.0.3
+info:
+  title: ParaFlow Database Operations API
+  description: |
+    API contract for Notion database CRUD operations (MVP).
+
+    Note: Database pages use existing Page CRUD operations with parent_database_id in metadata.
+  version: 1.0.0
+
+paths:
+  /databases:
+    post:
+      summary: Create a new database
+      operationId: createDatabase
+      tags:
+        - Database Operations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatabaseRequest'
+            examples:
+              basic_database:
+                summary: Basic database with text properties
+                value:
+                  title: "Project Tasks"
+                  description: "Task tracking database"
+                  parent_id: "page-123"
+                  properties:
+                    Name:
+                      property_type: "TITLE"
+                      is_required: true
+                    Status:
+                      property_type: "SELECT"
+                      config:
+                        options:
+                          - name: "Todo"
+                            color: "red"
+                          - name: "In Progress"
+                            color: "yellow"
+                          - name: "Done"
+                            color: "green"
+                    Notes:
+                      property_type: "RICH_TEXT"
+      responses:
+        '201':
+          description: Database created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabaseResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /databases/{database_id}:
+    get:
+      summary: Retrieve a database by ID
+      operationId: getDatabaseById
+      tags:
+        - Database Operations
+      parameters:
+        - name: database_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Notion database ID
+      responses:
+        '200':
+          description: Database retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabaseResponse'
+        '404':
+          description: Database not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    patch:
+      summary: Update an existing database
+      operationId: updateDatabase
+      tags:
+        - Database Operations
+      parameters:
+        - name: database_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDatabaseRequest'
+      responses:
+        '200':
+          description: Database updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabaseResponse'
+        '404':
+          description: Database not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete (archive) a database
+      operationId: deleteDatabase
+      tags:
+        - Database Operations
+      parameters:
+        - name: database_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: confirm
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Confirmation flag for destructive operation
+      responses:
+        '200':
+          description: Database archived successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Database archived successfully"
+        '400':
+          description: Confirmation required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmationRequiredResponse'
+        '404':
+          description: Database not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    CreateDatabaseRequest:
+      type: object
+      required:
+        - title
+        - properties
+      properties:
+        title:
+          type: string
+          minLength: 1
+          description: Database title
+        description:
+          type: string
+          description: Database description
+        parent_id:
+          type: string
+          description: Parent page ID (optional, workspace root if not provided)
+        properties:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DatabasePropertySchema'
+          minProperties: 1
+
+    UpdateDatabaseRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        properties:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DatabasePropertySchema'
+
+    DatabasePropertySchema:
+      type: object
+      required:
+        - property_type
+      properties:
+        property_type:
+          type: string
+          enum: [TITLE, RICH_TEXT, NUMBER, SELECT, MULTI_SELECT, DATE, CHECKBOX, URL, EMAIL]
+        config:
+          type: object
+          description: Type-specific configuration (e.g., options for SELECT)
+        is_required:
+          type: boolean
+          default: false
+
+    DatabaseResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        properties:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DatabasePropertySchema'
+        parent_id:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+
+    ConfirmationRequiredResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "ConfirmationRequired"
+        message:
+          type: string
+          example: "This database contains pages. Deleting will archive all pages. Set confirm=true to proceed."
+        page_count:
+          type: integer
+
+# Note on Database Pages:
+# Pages in databases are created using the existing Page CRUD operations.
+# To create a page in a database, use POST /pages with:
+# {
+#   "title": "Page title",
+#   "content": "Optional content",
+#   "metadata": {
+#     "parent_database_id": "database_id",
+#     "properties": {
+#       "PropertyName": "value",
+#       ...
+#     }
+#   }
+# }
